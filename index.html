@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp बिझनेस मेसेज जनरेटर (कस्टमाइज्ड)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- SheetJS/xlsx CDN for reading Excel/CSV files -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e5ddd5; /* Light WhatsApp background color */
+        }
+        .container {
+            max-width: 800px;
+        }
+        .step-card {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .step-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+        /* Custom scrollbar for message box */
+        #results-container {
+            max-height: 400px;
+            background-color: #f7f7f7;
+            border: 1px solid #d1d1d1;
+        }
+        #results-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        #results-container::-webkit-scrollbar-thumb {
+            background-color: #4CAF50; /* WhatsApp Green */
+            border-radius: 4px;
+        }
+        .whatsapp-icon {
+            color: #25D366; /* WhatsApp Green */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="container mx-auto step-card p-6 sm:p-10 rounded-2xl shadow-2xl">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-2 flex items-center justify-center">
+                <i data-lucide="message-square-text" class="whatsapp-icon mr-3 w-8 h-8 sm:w-10 sm:h-10"></i>
+                व्हॉट्सअॅप **बिझनेस** मेसेज ऑटो-जनरेटर
+            </h1>
+            <p class="text-sm text-red-600 font-semibold mt-4 p-3 bg-red-100 rounded-lg border-l-4 border-red-500">
+                ⚠️ महत्त्वाची सूचना: हे ॲप फक्त लिंक्स तयार करते. बल्कमध्ये मेसेज पाठवण्यासाठी, तुम्हाला प्रत्येक लिंकवर क्लिक करून मेसेज **मॅन्युअली** सेंड करावा लागेल.
+            </p>
+        </header>
+
+        <!-- STEP 1: File Upload -->
+        <div class="mb-8 p-6 rounded-xl step-card">
+            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
+                <i data-lucide="upload-cloud" class="w-5 h-5 mr-3 text-blue-500"></i>
+                1. एक्सेल फाईल अपलोड करा
+            </h2>
+            <input type="file" id="excelFile" accept=".csv, .xlsx, .xls" class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-3 file:px-6
+                file:rounded-full file:border-0
+                file:text-sm file:font-bold
+                file:bg-indigo-50 file:text-indigo-700
+                hover:file:bg-indigo-100 cursor-pointer" onchange="handleFileUpload()">
+            <p id="fileStatus" class="mt-3 text-xs text-gray-600">
+                (फाईलमध्ये 'MobileNumber' आणि 'Name' हे कॉलम्स असणे आवश्यक आहे.)
+            </p>
+        </div>
+
+        <!-- STEP 2: Message Template -->
+        <div class="mb-8 p-6 rounded-xl step-card">
+            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
+                <i data-lucide="file-text" class="w-5 h-5 mr-3 text-green-500"></i>
+                2. मेसेज टेम्पलेट लिहा
+            </h2>
+             <!-- Placeholder text is updated to reflect the new automatic prefix -->
+            <textarea id="messageTemplate" rows="5" placeholder="उदाहरणार्थ: तुमच्या ऑर्डरची माहिती देण्यासाठी आम्ही संपर्क करत आहोत. अधिक माहितीसाठी संपर्क करा."
+                      class="w-full p-4 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-150 shadow-inner"></textarea>
+            <p class="mt-3 text-sm text-green-600 font-medium p-2 bg-green-50 rounded-md">
+                🎉 कस्टमायझेशन: तुमचा मेसेज आपोआप **<span class="font-mono text-base bg-yellow-200 px-2 py-0.5 rounded-md text-yellow-800 font-semibold">नमस्कार {name} जी,</span>** ने सुरू होईल. तुम्हाला फक्त त्यापुढील मजकूर लिहायचा आहे.
+            </p>
+        </div>
+
+        <!-- STEP 3: Generate Button -->
+        <div class="text-center mb-8">
+            <button onclick="generateLinks()" class="w-full sm:w-2/3 px-8 py-4 bg-green-600 text-white font-bold text-lg rounded-full shadow-xl hover:bg-green-700 transition duration-300 transform hover:scale-105 active:scale-100 flex items-center justify-center mx-auto" id="generateBtn">
+                <i data-lucide="send" class="w-5 h-5 mr-2"></i>
+                व्हॉट्सअॅप लिंक्स तयार करा
+            </button>
+        </div>
+
+        <!-- STEP 4: Results -->
+        <div id="results-container" class="mt-8 p-6 rounded-xl step-card" style="display: none;">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2 flex items-center">
+                <i data-lucide="list-checks" class="w-6 h-6 mr-3 text-teal-600"></i>
+                3. तयार झालेल्या लिंक्स
+            </h2>
+            <div id="linkList" class="space-y-3 p-2 overflow-y-auto" style="max-height: 250px;">
+                <!-- Links will be inserted here -->
+            </div>
+            <div id="error-message" class="text-red-600 font-semibold mt-4 p-3 bg-red-100 rounded-lg border-l-4 border-red-500" style="display: none;"></div>
+            
+            <button onclick="openAllLinks()" class="mt-6 w-full px-6 py-3 bg-red-500 text-white font-bold text-md rounded-lg shadow-lg hover:bg-red-600 transition duration-300 transform hover:scale-105 flex items-center justify-center">
+                <i data-lucide="zap" class="w-4 h-4 mr-2"></i>
+                सर्व लिंक्स एकाच वेळी उघडा (ब्राउझर ब्लॉक करू शकतो!)
+            </button>
+        </div>
+        
+    </div>
+
+    <!-- Scripting for Logic -->
+    <script>
+        // Initialize Lucide Icons
+        window.onload = function() {
+            lucide.createIcons();
+        };
+        
+        let excelData = [];
+        
+        // Firebase Auth Init (required in the immersive environment)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // 1. फाईल अपलोड हाताळणे आणि डेटा वाचणे
+        function handleFileUpload() {
+            const file = document.getElementById('excelFile').files[0];
+            const fileStatus = document.getElementById('fileStatus');
+            const linkList = document.getElementById('linkList');
+            const resultsContainer = document.getElementById('results-container');
+            const errorMessage = document.getElementById('error-message');
+            
+            linkList.innerHTML = '';
+            resultsContainer.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            if (!file) {
+                fileStatus.innerHTML = '<i data-lucide="alert-triangle" class="w-4 h-4 mr-1 inline-block text-red-500"></i> कृपया एक Excel/CSV फाईल निवडा.';
+                fileStatus.classList.add('text-red-500', 'font-semibold');
+                lucide.createIcons();
+                return;
+            }
+
+            fileStatus.textContent = `फाईल वाचत आहे: ${file.name}...`;
+            fileStatus.classList.remove('text-red-500', 'font-semibold');
+
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    
+                    // Convert sheet to JSON array
+                    excelData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+                    if (excelData.length === 0 || excelData.length === 1) { // 1 means only header row
+                        fileStatus.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-1 inline-block text-red-500"></i> फाईलमध्ये कोणताही डेटा नाही.';
+                        fileStatus.classList.add('text-red-500', 'font-semibold');
+                        lucide.createIcons();
+                        return;
+                    }
+
+                    // Extract headers (first row) and rename columns for consistency
+                    const headers = excelData[0].map(h => {
+                        if (typeof h === 'string') {
+                            const normalized = h.trim().toLowerCase().replace(/\s/g, '');
+                            if (normalized.includes('mobile') || normalized.includes('phone') || normalized.includes('number')) {
+                                return 'MobileNumber';
+                            }
+                            if (normalized.includes('name') || normalized.includes('customer')) {
+                                return 'Name';
+                            }
+                        }
+                        return h; // Keep original if not recognized
+                    });
+
+                    // Convert array of arrays to array of objects
+                    const dataObjects = [];
+                    for (let i = 1; i < excelData.length; i++) {
+                        const row = excelData[i];
+                        const obj = {};
+                        for (let j = 0; j < headers.length; j++) {
+                            obj[headers[j]] = row[j];
+                        }
+                        dataObjects.push(obj);
+                    }
+                    excelData = dataObjects.filter(row => String(row.MobileNumber).replace(/[^0-9]/g, '').length > 5); // Filter out invalid numbers
+
+                    fileStatus.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 mr-1 inline-block text-green-500"></i> यशस्वीरित्या वाचले. एकूण वैध ग्राहक: ${excelData.length}`;
+                    fileStatus.classList.remove('text-red-500', 'font-semibold');
+                    fileStatus.classList.add('text-green-600', 'font-semibold');
+                    lucide.createIcons();
+
+                } catch (error) {
+                    console.error("Error reading file:", error);
+                    fileStatus.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-1 inline-block text-red-500"></i> फाईल वाचताना त्रुटी आली. फाईलचा फॉरमॅट तपासा.';
+                    fileStatus.classList.add('text-red-500', 'font-semibold');
+                    lucide.createIcons();
+                }
+            };
+            
+            reader.onerror = function(error) {
+                console.error("Reader Error:", error);
+                fileStatus.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-1 inline-block text-red-500"></i> फाईल वाचता आली नाही.';
+                fileStatus.classList.add('text-red-500', 'font-semibold');
+                lucide.createIcons();
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 2. व्हॉट्सअॅप लिंक्स तयार करणे
+        function generateLinks() {
+            const template = document.getElementById('messageTemplate').value;
+            const linkList = document.getElementById('linkList');
+            const resultsContainer = document.getElementById('results-container');
+            const errorMessage = document.getElementById('error-message');
+            
+            linkList.innerHTML = '';
+            errorMessage.style.display = 'none';
+
+            if (excelData.length === 0) {
+                errorMessage.innerHTML = '<i data-lucide="alert-triangle" class="w-5 h-5 mr-2 inline-block"></i> त्रुटी: कृपया आधी Excel फाईल यशस्वीरित्या अपलोड करा आणि त्यात वैध डेटा आहे हे तपासा.';
+                errorMessage.style.display = 'block';
+                resultsContainer.style.display = 'block';
+                lucide.createIcons();
+                return;
+            }
+
+            if (!template.trim()) {
+                errorMessage.innerHTML = '<i data-lucide="alert-triangle" class="w-5 h-5 mr-2 inline-block"></i> त्रुटी: कृपया मेसेज टेम्पलेट लिहा.';
+                errorMessage.style.display = 'block';
+                resultsContainer.style.display = 'block';
+                lucide.createIcons();
+                return;
+            }
+
+            resultsContainer.style.display = 'block';
+
+            let validLinksCount = 0;
+
+            excelData.forEach((row, index) => {
+                const mobileNumber = String(row.MobileNumber).replace(/[^0-9]/g, ''); // Clean number (remove dashes/spaces)
+                const rawName = row.Name || 'प्रिय ग्राहक'; 
+                const nameForPrefix = rawName.toString().trim(); // Use the raw name for the prefix
+
+                if (mobileNumber.length < 6) return; // Skip if number is too short/invalid
+
+                validLinksCount++;
+
+                // नवीन मागणीनुसार: "नमस्कार {name} जी," + template
+                const prefix = `नमस्कार ${nameForPrefix} जी, `;
+                
+                // 1. अंतिम मेसेज तयार करा (Prefix + User's template)
+                let finalMessage = prefix + template;
+
+                // 2. URL एन्कोड करा
+                const encodedMessage = encodeURIComponent(finalMessage);
+
+                // 3. व्हॉट्सअॅप लिंक तयार करा (Country code assumption: needs to be included in the number)
+                const whatsappLink = `https://wa.me/${mobileNumber}?text=${encodedMessage}`;
+
+                // 4. लिंक UI मध्ये दाखवा
+                const linkItem = document.createElement('div');
+                linkItem.className = 'flex flex-col sm:flex-row items-start sm:items-center p-3 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition duration-150';
+                
+                linkItem.innerHTML = `
+                    <p class="flex-1 text-sm text-gray-800 font-medium mb-2 sm:mb-0">
+                        <span class="font-bold text-green-700">${validLinksCount}.</span> 
+                        <span class="text-indigo-600 font-semibold">${rawName}</span> 
+                        <span class="text-gray-500 text-xs">(${mobileNumber})</span>
+                    </p>
+                    <a href="${whatsappLink}" target="_blank" class="flex-shrink-0 ml-0 sm:ml-3 w-full sm:w-auto px-4 py-2 text-sm font-semibold rounded-full bg-green-500 text-white hover:bg-green-600 transition duration-150 flex items-center justify-center">
+                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
+                        चॅट उघडा
+                    </a>
+                `;
+                
+                linkList.appendChild(linkItem);
+            });
+            
+            if (validLinksCount === 0) {
+                errorMessage.innerHTML = '<i data-lucide="x-circle" class="w-5 h-5 mr-2 inline-block"></i> त्रुटी: कोणतीही वैध व्हॉट्सअॅप लिंक तयार झाली नाही. कृपया तपासा की तुमच्या फाईलमध्ये वैध MobileNumber (कंट्री कोडसह) कॉलम आहेत.';
+                errorMessage.style.display = 'block';
+                lucide.createIcons();
+            } else {
+                 errorMessage.style.display = 'none';
+                 lucide.createIcons();
+            }
+            lucide.createIcons();
+        }
+
+        // 3. सर्व लिंक्स एकाच वेळी उघडणे
+        function openAllLinks() {
+            const links = document.querySelectorAll('#linkList a');
+            if (links.length === 0) {
+                showCustomWarning('कृपया व्हॉट्सअॅप लिंक्स तयार करण्यासाठी **व्हॉट्सअॅप लिंक्स तयार करा** बटणावर क्लिक करा.');
+                return;
+            }
+
+            const warningMessage = "सावधान: तुम्ही एकाच वेळी अनेक व्हॉट्सअॅप लिंक्स उघडत आहात. तुमचा ब्राउझर पॉप-अप सुरक्षेमुळे अनेक विंडोज/टॅब्स ब्लॉक करू शकतो. प्रत्येक मेसेज पाठवण्यासाठी तुम्हाला प्रत्येक लिंकवर मॅन्युअली क्लिक करावे लागेल.";
+            
+            showCustomWarning(warningMessage);
+
+
+            // Attempt to open all links (this will likely fail partially due to browser security)
+            links.forEach((link, index) => {
+                // 500ms delay to potentially help with pop-up blocking
+                setTimeout(() => {
+                    window.open(link.href, '_blank');
+                }, index * 500); 
+            });
+        }
+
+        // Custom non-alert modal/message 
+        function showCustomWarning(msg) {
+            const existingModal = document.getElementById('custom-warning-modal');
+            if (existingModal) existingModal.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'custom-warning-modal';
+            modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full text-center transform transition duration-300 scale-100">
+                    <h3 class="text-xl font-bold text-red-600 mb-4 flex items-center justify-center">
+                        <i data-lucide="shield-alert" class="w-6 h-6 mr-2"></i>
+                        सुरक्षा सूचना
+                    </h3>
+                    <p class="text-gray-700 mb-6 text-sm">${msg}</p>
+                    <button onclick="document.getElementById('custom-warning-modal').remove()" class="px-5 py-2 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition duration-150 shadow-md">
+                        ओके, समजले
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
+
