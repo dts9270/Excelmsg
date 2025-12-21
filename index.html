@@ -3,350 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp बिझनेस मेसेज जनरेटर (कस्टमाइज्ड)</title>
-    <!-- Tailwind CSS CDN -->
+    <title>RCM Colourful Pro Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- SheetJS/xlsx CDN for reading Excel/CSV files -->
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #e5ddd5; /* Light WhatsApp background color */
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        
+        /* Smooth Gradients for text */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(to right, #ec4899, #8b5cf6);
         }
-        .container {
-            max-width: 800px;
-        }
-        .step-card {
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            transition: all 0.3s ease;
-        }
-        .step-card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
-        /* Custom scrollbar for message box */
-        #results-container {
-            max-height: 400px;
-            background-color: #f7f7f7;
-            border: 1px solid #d1d1d1;
-        }
-        #results-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        #results-container::-webkit-scrollbar-thumb {
-            background-color: #4CAF50; /* WhatsApp Green */
-            border-radius: 4px;
-        }
-        .whatsapp-icon {
-            color: #25D366; /* WhatsApp Green */
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #ec4899, #8b5cf6); border-radius: 10px; }
+
+        /* Animations */
+        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
-<body class="p-4 sm:p-8">
+<body class="min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-pink-100 via-purple-50 to-blue-100">
 
-    <div class="container mx-auto step-card p-6 sm:p-10 rounded-2xl shadow-2xl">
-        <header class="text-center mb-10">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-2 flex items-center justify-center">
-                <i data-lucide="message-square-text" class="whatsapp-icon mr-3 w-8 h-8 sm:w-10 sm:h-10"></i>
-                व्हॉट्सअॅप **बिझनेस** मेसेज ऑटो-जनरेटर
-            </h1>
-            <p class="text-sm text-red-600 font-semibold mt-4 p-3 bg-red-100 rounded-lg border-l-4 border-red-500">
-                ⚠️ महत्त्वाची सूचना: हे ॲप फक्त लिंक्स तयार करते. बल्कमध्ये मेसेज पाठवण्यासाठी, तुम्हाला प्रत्येक लिंकवर क्लिक करून मेसेज **मॅन्युअली** सेंड करावा लागेल.
-            </p>
-        </header>
-
-        <!-- STEP 1: File Upload -->
-        <div class="mb-8 p-6 rounded-xl step-card">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
-                <i data-lucide="upload-cloud" class="w-5 h-5 mr-3 text-blue-500"></i>
-                1. एक्सेल फाईल अपलोड करा
-            </h2>
-            <input type="file" id="excelFile" accept=".csv, .xlsx, .xls" class="block w-full text-sm text-gray-500
-                file:mr-4 file:py-3 file:px-6
-                file:rounded-full file:border-0
-                file:text-sm file:font-bold
-                file:bg-indigo-50 file:text-indigo-700
-                hover:file:bg-indigo-100 cursor-pointer" onchange="handleFileUpload()">
-            <p id="fileStatus" class="mt-3 text-xs text-gray-600">
-                (फाईलमध्ये 'MobileNumber' आणि 'Name' हे कॉलम्स असणे आवश्यक आहे.)
-            </p>
-        </div>
-
-        <!-- STEP 2: Message Template -->
-        <div class="mb-8 p-6 rounded-xl step-card">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
-                <i data-lucide="file-text" class="w-5 h-5 mr-3 text-green-500"></i>
-                2. मेसेज टेम्पलेट लिहा
-            </h2>
-             <!-- Placeholder text is updated to reflect the new automatic prefix -->
-            <textarea id="messageTemplate" rows="5" placeholder="उदाहरणार्थ: तुमच्या ऑर्डरची माहिती देण्यासाठी आम्ही संपर्क करत आहोत. अधिक माहितीसाठी संपर्क करा."
-                      class="w-full p-4 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition duration-150 shadow-inner"></textarea>
-            <p class="mt-3 text-sm text-green-600 font-medium p-2 bg-green-50 rounded-md">
-                🎉 कस्टमायझेशन: तुमचा मेसेज आपोआप **<span class="font-mono text-base bg-yellow-200 px-2 py-0.5 rounded-md text-yellow-800 font-semibold">नमस्कार {name} जी,</span>** ने सुरू होईल. तुम्हाला फक्त त्यापुढील मजकूर लिहायचा आहे.
-            </p>
-        </div>
-
-        <!-- STEP 3: Generate Button -->
-        <div class="text-center mb-8">
-            <button onclick="generateLinks()" class="w-full sm:w-2/3 px-8 py-4 bg-green-600 text-white font-bold text-lg rounded-full shadow-xl hover:bg-green-700 transition duration-300 transform hover:scale-105 active:scale-100 flex items-center justify-center mx-auto" id="generateBtn">
-                <i data-lucide="send" class="w-5 h-5 mr-2"></i>
-                व्हॉट्सअॅप लिंक्स तयार करा
-            </button>
-        </div>
-
-        <!-- STEP 4: Results -->
-        <div id="results-container" class="mt-8 p-6 rounded-xl step-card" style="display: none;">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2 flex items-center">
-                <i data-lucide="list-checks" class="w-6 h-6 mr-3 text-teal-600"></i>
-                3. तयार झालेल्या लिंक्स
-            </h2>
-            <div id="linkList" class="space-y-3 p-2 overflow-y-auto" style="max-height: 250px;">
-                <!-- Links will be inserted here -->
-            </div>
-            <div id="error-message" class="text-red-600 font-semibold mt-4 p-3 bg-red-100 rounded-lg border-l-4 border-red-500" style="display: none;"></div>
-            
-            <button onclick="openAllLinks()" class="mt-6 w-full px-6 py-3 bg-red-500 text-white font-bold text-md rounded-lg shadow-lg hover:bg-red-600 transition duration-300 transform hover:scale-105 flex items-center justify-center">
-                <i data-lucide="zap" class="w-4 h-4 mr-2"></i>
-                सर्व लिंक्स एकाच वेळी उघडा (ब्राउझर ब्लॉक करू शकतो!)
-            </button>
-        </div>
-        
+    <div class="h-72 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 rounded-b-[4rem] shadow-2xl absolute w-full z-0 overflow-hidden">
+        <div class="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full -translate-x-10 -translate-y-10 blur-xl"></div>
+        <div class="absolute bottom-0 right-0 w-60 h-60 bg-yellow-300/20 rounded-full translate-x-10 translate-y-10 blur-2xl"></div>
     </div>
 
-    <!-- Scripting for Logic -->
-    <script>
-        // Initialize Lucide Icons
-        window.onload = function() {
-            lucide.createIcons();
-        };
+    <div class="relative z-10 max-w-6xl mx-auto p-4 md:p-8">
         
-        let excelData = [];
-        
-        // Firebase Auth Init (required in the immersive environment)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-
-        // 1. फाईल अपलोड हाताळणे आणि डेटा वाचणे
-        function handleFileUpload() {
-            const file = document.getElementById('excelFile').files[0];
-            const fileStatus = document.getElementById('fileStatus');
-            const linkList = document.getElementById('linkList');
-            const resultsContainer = document.getElementById('results-container');
-            const errorMessage = document.getElementById('error-message');
+        <div class="flex flex-col md:flex-row justify-between items-center text-white mb-10">
+            <div class="mb-6 md:mb-0 text-center md:text-left fade-in-up">
+                <h1 class="text-4xl font-extrabold flex items-center justify-center md:justify-start gap-3 drop-shadow-md">
+                    <div class="p-3 bg-white/25 rounded-2xl backdrop-blur-md shadow-inner">
+                        <i data-lucide="rocket" class="w-8 h-8 text-yellow-300 fill-yellow-300"></i>
+                    </div>
+                    RCM डिजिटल मार्केटर
+                </h1>
+                <p class="text-pink-100 mt-3 text-lg font-medium tracking-wide ml-1">बिझनेस वाढीचा नवीन रंगीबेरंगी मार्ग! ✨</p>
+            </div>
             
-            linkList.innerHTML = '';
-            resultsContainer.style.display = 'none';
-            errorMessage.style.display = 'none';
+            <button onclick="exportReport()" class="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 fade-in-up" style="animation-delay: 0.1s">
+                <i data-lucide="download-cloud" class="w-5 h-5 group-hover:animate-bounce"></i>
+                रिपोर्ट सेव्ह करा
+            </button>
+        </div>
 
-            if (!file) {
-                fileStatus.innerHTML = '<i data-lucide="alert-triangle" class="w-4 h-4 mr-1 inline-block text-red-500"></i> कृपया एक Excel/CSV फाईल निवडा.';
-                fileStatus.classList.add('text-red-500', 'font-semibold');
-                lucide.createIcons();
-                return;
-            }
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 fade-in-up" style="animation-delay: 0.2s">
+            <div class="bg-gradient-to-br from-blue-400 to-indigo-600 p-6 rounded-3xl shadow-xl text-white flex items-center justify-between transform hover:scale-105 transition duration-300 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 text-white/10"><i data-lucide="users" class="w-32 h-32"></i></div>
+                <div class="relative z-10">
+                    <p class="text-blue-100 text-sm uppercase font-bold tracking-wider mb-1">एकूण संपर्क</p>
+                    <h2 class="text-4xl font-extrabold mt-1" id="totalCountDisplay">0</h2>
+                </div>
+                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner">
+                    <i data-lucide="layers" class="w-8 h-8 text-white"></i>
+                </div>
+            </div>
 
-            fileStatus.textContent = `फाईल वाचत आहे: ${file.name}...`;
-            fileStatus.classList.remove('text-red-500', 'font-semibold');
+            <div class="bg-gradient-to-br from-orange-400 via-pink-500 to-rose-500 p-6 rounded-3xl shadow-xl text-white flex items-center justify-between transform hover:scale-105 transition duration-300 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 text-white/10"><i data-lucide="clock" class="w-32 h-32"></i></div>
+                <div class="relative z-10">
+                    <p class="text-orange-100 text-sm uppercase font-bold tracking-wider mb-1">बाकी (Pending)</p>
+                    <h2 class="text-4xl font-extrabold mt-1" id="pendingCount">0</h2>
+                </div>
+                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner">
+                    <i data-lucide="hourglass" class="w-8 h-8 text-white animate-pulse"></i>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-teal-400 to-emerald-600 p-6 rounded-3xl shadow-xl text-white flex items-center justify-between transform hover:scale-105 transition duration-300 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 text-white/10"><i data-lucide="check-circle-2" class="w-32 h-32"></i></div>
+                <div class="relative z-10">
+                    <p class="text-teal-100 text-sm uppercase font-bold tracking-wider mb-1">पूर्ण (Sent)</p>
+                    <h2 class="text-4xl font-extrabold mt-1" id="sentCountVal">0</h2>
+                </div>
+                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner">
+                    <i data-lucide="party-popper" class="w-8 h-8 text-white"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 fade-in-up" style="animation-delay: 0.3s">
+            
+            <div class="lg:col-span-1 space-y-6">
+                <div class="glass-card p-6 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 border-t-4 border-purple-400">
+                    <div class="flex items-center gap-3 mb-5">
+                        <span class="bg-purple-100 text-purple-600 text-sm font-black px-3 py-1.5 rounded-full shadow-sm">STEP 1</span>
+                        <h3 class="font-bold text-gray-700 text-lg">एक्सेल फाइल जोडा</h3>
+                    </div>
+                    <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-purple-300 border-dashed rounded-2xl cursor-pointer bg-purple-50/30 hover:bg-purple-100/50 transition group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 group-hover:opacity-100 transition-opacity opacity-0"></div>
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6 relative z-10">
+                            <i data-lucide="file-up" class="w-10 h-10 mb-3 text-purple-400 group-hover:text-purple-600 transition group-hover:scale-110 duration-300"></i>
+                            <p class="text-sm font-medium text-gray-600"><span class="text-purple-600 font-bold underline decoration-2 underline-offset-2">क्लिक करा</span> किंवा फाइल ओढा</p>
+                        </div>
+                        <input type="file" id="fileInput" accept=".xlsx, .xls" class="hidden" />
+                    </label>
+                    <p id="fileNameDisplay" class="text-xs font-medium text-center text-purple-500 mt-3 h-5 truncate"></p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 border-t-4 border-pink-400 relative">
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-3">
+                            <span class="bg-pink-100 text-pink-600 text-sm font-black px-3 py-1.5 rounded-full shadow-sm">STEP 2</span>
+                            <h3 class="font-bold text-gray-700 text-lg">मेसेज टाईप करा</h3>
+                        </div>
+                        <div class="relative group">
+                             <select id="templateSelect" onchange="applyTemplate()" class="appearance-none pl-4 pr-10 py-2 text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full cursor-pointer hover:shadow-md transition focus:outline-none">
+                                <option value="" class="text-gray-700 bg-white">✨ तयार मेसेज (Templates)</option>
+                                <option value="नमस्कार {name}, RCM च्या नवीन उत्पादनांची माहिती घेण्यासाठी खालील लिंक पहा." class="text-gray-700 bg-white">📦 प्रोडक्ट माहिती</option>
+                                <option value="नमस्कार {name}, सणांच्या हार्दिक शुभेच्छा! - RCM परिवार." class="text-gray-700 bg-white">🎉 सण शुभेच्छा</option>
+                                <option value="नमस्कार {name}, सेमिनारचे आमंत्रण स्वीकार करा." class="text-gray-700 bg-white">🎤 सेमिनार</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-white absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <textarea id="msgInput" rows="6" class="w-full p-5 bg-white/50 border-2 border-pink-200 rounded-2xl text-gray-700 focus:border-pink-500 focus:ring-4 focus:ring-pink-200/50 shadow-sm resize-none text-sm transition-all" placeholder="नमस्कार {name}, तुमचा मेसेज इथे लिहा..."></textarea>
+                        <div class="absolute bottom-3 right-3 text-[10px] text-pink-400 font-bold bg-pink-50 px-2 py-1 rounded-full">Tip: {name} वापरा</div>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <button onclick="clearList()" class="w-full py-3 text-sm font-bold text-red-500 bg-red-50/80 border-2 border-red-100 rounded-xl hover:bg-red-100 hover:border-red-300 transition flex items-center justify-center gap-2 group">
+                            <i data-lucide="trash-2" class="w-4 h-4 group-hover:rotate-12 transition"></i> सगळे रिसेट करा (Reset)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 glass-card rounded-3xl shadow-xl overflow-hidden flex flex-col h-[650px] border-t-4 border-blue-400 relative">
+                
+                <div class="p-5 border-b border-gray-100 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 flex flex-wrap gap-4 items-center justify-between sticky top-0 z-20">
+                    <h3 class="font-extrabold text-xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 pl-2 flex items-center gap-2">
+                        <i data-lucide="list-checks" class="w-6 h-6 text-blue-500"></i> ग्राहक यादी
+                    </h3>
+                    
+                    <div class="bg-white/70 p-1.5 rounded-full flex shadow-sm border border-white">
+                        <button onclick="setFilter('all')" id="btn-all" class="px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md bg-gradient-to-r from-blue-500 to-purple-500 text-white">सर्व</button>
+                        <button onclick="setFilter('pending')" id="btn-pending" class="px-5 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-purple-600 transition-all hover:bg-purple-50">बाकी</button>
+                        <button onclick="setFilter('sent')" id="btn-sent" class="px-5 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-green-600 transition-all hover:bg-green-50">झालेले</button>
+                    </div>
+                </div>
+
+                <div class="overflow-y-auto flex-1 p-4 bg-white/30 backdrop-blur-sm">
+                    <table class="w-full border-collapse">
+                        <tbody id="tableBody" class="divide-y divide-gray-100/50">
+                            <tr>
+                                <td colspan="4" class="p-16 flex flex-col items-center justify-center text-center text-gray-400">
+                                    <div class="bg-purple-50 p-6 rounded-full mb-4 animate-bounce-slow">
+                                        <i data-lucide="sparkles" class="w-16 h-16 text-purple-300"></i>
+                                    </div>
+                                    <span class="text-lg font-medium text-gray-500">यादी रिकामी आहे.</span>
+                                    <span class="text-sm text-purple-400 mt-1">कृपया डावीकडून एक्सेल फाइल जोडा.</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 <div class="h-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 w-full absolute bottom-0"></div>
+            </div>
+        </div>
+
+        <div class="text-center mt-10 mb-6 text-gray-500 text-sm font-medium flex items-center justify-center gap-2">
+            Made with <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500"></i> for RCM Success
+        </div>
+    </div>
+
+    <script>
+        // --- Variables ---
+        let excelData = []; 
+        let currentFilter = 'all';
+
+        // --- 1. Load Excel ---
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('fileNameDisplay').innerText = "📂 " + file.name;
 
             const reader = new FileReader();
-            
             reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const sheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[sheetName];
-                    
-                    // Convert sheet to JSON array
-                    excelData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-                    if (excelData.length === 0 || excelData.length === 1) { // 1 means only header row
-                        fileStatus.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-1 inline-block text-red-500"></i> फाईलमध्ये कोणताही डेटा नाही.';
-                        fileStatus.classList.add('text-red-500', 'font-semibold');
-                        lucide.createIcons();
-                        return;
-                    }
+                excelData = jsonData.slice(1).map(row => ({
+                    name: row[0] || 'Sir/Ma\'am',
+                    number: row[1] ? row[1].toString() : '',
+                    status: 'pending'
+                })).filter(item => item.number.length >= 10);
 
-                    // Extract headers (first row) and rename columns for consistency
-                    const headers = excelData[0].map(h => {
-                        if (typeof h === 'string') {
-                            const normalized = h.trim().toLowerCase().replace(/\s/g, '');
-                            if (normalized.includes('mobile') || normalized.includes('phone') || normalized.includes('number')) {
-                                return 'MobileNumber';
-                            }
-                            if (normalized.includes('name') || normalized.includes('customer')) {
-                                return 'Name';
-                            }
-                        }
-                        return h; // Keep original if not recognized
-                    });
-
-                    // Convert array of arrays to array of objects
-                    const dataObjects = [];
-                    for (let i = 1; i < excelData.length; i++) {
-                        const row = excelData[i];
-                        const obj = {};
-                        for (let j = 0; j < headers.length; j++) {
-                            obj[headers[j]] = row[j];
-                        }
-                        dataObjects.push(obj);
-                    }
-                    excelData = dataObjects.filter(row => String(row.MobileNumber).replace(/[^0-9]/g, '').length > 5); // Filter out invalid numbers
-
-                    fileStatus.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 mr-1 inline-block text-green-500"></i> यशस्वीरित्या वाचले. एकूण वैध ग्राहक: ${excelData.length}`;
-                    fileStatus.classList.remove('text-red-500', 'font-semibold');
-                    fileStatus.classList.add('text-green-600', 'font-semibold');
-                    lucide.createIcons();
-
-                } catch (error) {
-                    console.error("Error reading file:", error);
-                    fileStatus.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-1 inline-block text-red-500"></i> फाईल वाचताना त्रुटी आली. फाईलचा फॉरमॅट तपासा.';
-                    fileStatus.classList.add('text-red-500', 'font-semibold');
-                    lucide.createIcons();
-                }
+                updateStats();
+                renderTable();
             };
-            
-            reader.onerror = function(error) {
-                console.error("Reader Error:", error);
-                fileStatus.innerHTML = '<i data-lucide="x-circle" class="w-4 h-4 mr-1 inline-block text-red-500"></i> फाईल वाचता आली नाही.';
-                fileStatus.classList.add('text-red-500', 'font-semibold');
-                lucide.createIcons();
-            };
-
             reader.readAsArrayBuffer(file);
-        }
+        });
 
-        // 2. व्हॉट्सअॅप लिंक्स तयार करणे
-        function generateLinks() {
-            const template = document.getElementById('messageTemplate').value;
-            const linkList = document.getElementById('linkList');
-            const resultsContainer = document.getElementById('results-container');
-            const errorMessage = document.getElementById('error-message');
-            
-            linkList.innerHTML = '';
-            errorMessage.style.display = 'none';
+        // --- 2. Render List (Colourful Rows) ---
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
 
-            if (excelData.length === 0) {
-                errorMessage.innerHTML = '<i data-lucide="alert-triangle" class="w-5 h-5 mr-2 inline-block"></i> त्रुटी: कृपया आधी Excel फाईल यशस्वीरित्या अपलोड करा आणि त्यात वैध डेटा आहे हे तपासा.';
-                errorMessage.style.display = 'block';
-                resultsContainer.style.display = 'block';
-                lucide.createIcons();
+            let filteredData = excelData;
+            if (currentFilter === 'pending') filteredData = excelData.filter(d => d.status === 'pending');
+            if (currentFilter === 'sent') filteredData = excelData.filter(d => d.status === 'sent');
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-12 text-center text-gray-400 text-base font-medium">या फिल्टरमध्ये कोणताही डेटा नाही. ✨</td></tr>';
                 return;
             }
 
-            if (!template.trim()) {
-                errorMessage.innerHTML = '<i data-lucide="alert-triangle" class="w-5 h-5 mr-2 inline-block"></i> त्रुटी: कृपया मेसेज टेम्पलेट लिहा.';
-                errorMessage.style.display = 'block';
-                resultsContainer.style.display = 'block';
-                lucide.createIcons();
-                return;
-            }
-
-            resultsContainer.style.display = 'block';
-
-            let validLinksCount = 0;
-
-            excelData.forEach((row, index) => {
-                const mobileNumber = String(row.MobileNumber).replace(/[^0-9]/g, ''); // Clean number (remove dashes/spaces)
-                const rawName = row.Name || 'प्रिय ग्राहक'; 
-                const nameForPrefix = rawName.toString().trim(); // Use the raw name for the prefix
-
-                if (mobileNumber.length < 6) return; // Skip if number is too short/invalid
-
-                validLinksCount++;
-
-                // नवीन मागणीनुसार: "नमस्कार {name} जी," + template
-                const prefix = `नमस्कार ${nameForPrefix} जी, `;
+            filteredData.forEach((item, index) => {
+                const originalIndex = excelData.indexOf(item);
+                const tr = document.createElement('tr');
+                tr.className = "group bg-white/60 hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 transition-all duration-300 rounded-2xl block md:table-row mb-3 border-b border-gray-100/50 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 p-4 md:p-0 relative overflow-hidden";
                 
-                // 1. अंतिम मेसेज तयार करा (Prefix + User's template)
-                let finalMessage = prefix + template;
+                const initials = item.name.substring(0, 1).toUpperCase();
+                // Colorful Avatar
+                const avatarBg = item.status === 'sent' 
+                    ? 'bg-gradient-to-br from-gray-300 to-gray-400' 
+                    : 'bg-gradient-to-br from-pink-400 to-purple-500 text-white shadow-lg shadow-purple-200';
 
-                // 2. URL एन्कोड करा
-                const encodedMessage = encodeURIComponent(finalMessage);
+                let actionBtn = '';
+                if (item.status === 'sent') {
+                    actionBtn = `
+                        <button disabled class="w-full md:w-auto px-5 py-2.5 bg-gray-100/80 text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200">
+                            <i data-lucide="check-check" class="w-4 h-4"></i> SENT
+                        </button>`;
+                } else {
+                    // Hero "Send" Button (Colorful Gradient)
+                    actionBtn = `
+                        <button onclick="sendWhatsApp(${originalIndex})" class="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 hover:from-orange-500 hover:to-purple-600 text-white rounded-xl text-xs font-extrabold shadow-md hover:shadow-xl hover:scale-105 transition-all transform flex items-center justify-center gap-2 group-btn overflow-hidden relative">
+                            <div class="absolute inset-0 bg-white/20 group-btn-hover:opacity-0 transition-opacity"></div>
+                            <i data-lucide="send" class="w-4 h-4 group-btn-hover:translate-x-1 transition-transform"></i> पाठवा
+                        </button>`;
+                }
 
-                // 3. व्हॉट्सअॅप लिंक तयार करा (Country code assumption: needs to be included in the number)
-                const whatsappLink = `https://wa.me/${mobileNumber}?text=${encodedMessage}`;
-
-                // 4. लिंक UI मध्ये दाखवा
-                const linkItem = document.createElement('div');
-                linkItem.className = 'flex flex-col sm:flex-row items-start sm:items-center p-3 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition duration-150';
-                
-                linkItem.innerHTML = `
-                    <p class="flex-1 text-sm text-gray-800 font-medium mb-2 sm:mb-0">
-                        <span class="font-bold text-green-700">${validLinksCount}.</span> 
-                        <span class="text-indigo-600 font-semibold">${rawName}</span> 
-                        <span class="text-gray-500 text-xs">(${mobileNumber})</span>
-                    </p>
-                    <a href="${whatsappLink}" target="_blank" class="flex-shrink-0 ml-0 sm:ml-3 w-full sm:w-auto px-4 py-2 text-sm font-semibold rounded-full bg-green-500 text-white hover:bg-green-600 transition duration-150 flex items-center justify-center">
-                        <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
-                        चॅट उघडा
-                    </a>
+                tr.innerHTML = `
+                    <td class="p-4 w-20 hidden md:table-cell text-center">
+                        <div class="w-12 h-12 ${avatarBg} rounded-2xl flex items-center justify-center font-extrabold text-lg shadow-sm mx-auto">
+                            ${initials}
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-3 md:hidden mb-3">
+                             <div class="w-10 h-10 ${avatarBg} rounded-xl flex items-center justify-center font-bold shadow-sm">${initials}</div>
+                        </div>
+                        <div class="font-bold text-gray-800 text-base group-hover:text-purple-700 transition">${item.name}</div>
+                        <div class="text-sm text-gray-500 font-semibold mt-1 flex items-center gap-1.5">
+                            <i data-lucide="smartphone" class="w-3.5 h-3.5 text-pink-400"></i> ${item.number}
+                        </div>
+                    </td>
+                    <td class="p-4 text-right">
+                        <div class="flex items-center justify-end gap-3 mt-4 md:mt-0">
+                            <a href="tel:${item.number}" class="p-2.5 bg-white border-2 border-blue-100 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all shadow-sm hover:shadow-md hover:-translate-y-1" title="कॉल करा">
+                                <i data-lucide="phone" class="w-4 h-4"></i>
+                            </a>
+                            ${actionBtn}
+                        </div>
+                    </td>
                 `;
-                
-                linkList.appendChild(linkItem);
+                tbody.appendChild(tr);
             });
-            
-            if (validLinksCount === 0) {
-                errorMessage.innerHTML = '<i data-lucide="x-circle" class="w-5 h-5 mr-2 inline-block"></i> त्रुटी: कोणतीही वैध व्हॉट्सअॅप लिंक तयार झाली नाही. कृपया तपासा की तुमच्या फाईलमध्ये वैध MobileNumber (कंट्री कोडसह) कॉलम आहेत.';
-                errorMessage.style.display = 'block';
-                lucide.createIcons();
-            } else {
-                 errorMessage.style.display = 'none';
-                 lucide.createIcons();
-            }
             lucide.createIcons();
         }
 
-        // 3. सर्व लिंक्स एकाच वेळी उघडणे
-        function openAllLinks() {
-            const links = document.querySelectorAll('#linkList a');
-            if (links.length === 0) {
-                showCustomWarning('कृपया व्हॉट्सअॅप लिंक्स तयार करण्यासाठी **व्हॉट्सअॅप लिंक्स तयार करा** बटणावर क्लिक करा.');
-                return;
-            }
+        // --- 3. Actions (Functions remain similar, UI updated) ---
+        function sendWhatsApp(index) {
+            const item = excelData[index];
+            let rawMsg = document.getElementById('msgInput').value;
+            if (!rawMsg.trim()) { alert("कृपया आधी मेसेज लिहा!"); return; }
 
-            const warningMessage = "सावधान: तुम्ही एकाच वेळी अनेक व्हॉट्सअॅप लिंक्स उघडत आहात. तुमचा ब्राउझर पॉप-अप सुरक्षेमुळे अनेक विंडोज/टॅब्स ब्लॉक करू शकतो. प्रत्येक मेसेज पाठवण्यासाठी तुम्हाला प्रत्येक लिंकवर मॅन्युअली क्लिक करावे लागेल.";
-            
-            showCustomWarning(warningMessage);
+            let finalMsg = rawMsg.replace(/{name}/g, item.name);
+            let cleanNumber = item.number.replace(/[^0-9]/g, '');
+            if (cleanNumber.length === 10) cleanNumber = '91' + cleanNumber;
 
+            window.open(`https://wa.me/${cleanNumber}?text=${encodeURIComponent(finalMsg)}`, '_blank');
 
-            // Attempt to open all links (this will likely fail partially due to browser security)
-            links.forEach((link, index) => {
-                // 500ms delay to potentially help with pop-up blocking
-                setTimeout(() => {
-                    window.open(link.href, '_blank');
-                }, index * 500); 
+            excelData[index].status = 'sent';
+            updateStats();
+            renderTable(); 
+        }
+
+        function setFilter(filterType) {
+            currentFilter = filterType;
+            ['all', 'pending', 'sent'].forEach(f => {
+                const btn = document.getElementById(`btn-${f}`);
+                if (f === filterType) {
+                    btn.className = "px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md bg-gradient-to-r from-blue-500 to-purple-500 text-white scale-105";
+                } else {
+                    btn.className = "px-5 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-purple-600 transition-all hover:bg-purple-50";
+                }
             });
+            renderTable();
         }
 
-        // Custom non-alert modal/message 
-        function showCustomWarning(msg) {
-            const existingModal = document.getElementById('custom-warning-modal');
-            if (existingModal) existingModal.remove();
-
-            const modal = document.createElement('div');
-            modal.id = 'custom-warning-modal';
-            modal.className = 'fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full text-center transform transition duration-300 scale-100">
-                    <h3 class="text-xl font-bold text-red-600 mb-4 flex items-center justify-center">
-                        <i data-lucide="shield-alert" class="w-6 h-6 mr-2"></i>
-                        सुरक्षा सूचना
-                    </h3>
-                    <p class="text-gray-700 mb-6 text-sm">${msg}</p>
-                    <button onclick="document.getElementById('custom-warning-modal').remove()" class="px-5 py-2 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition duration-150 shadow-md">
-                        ओके, समजले
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            lucide.createIcons();
+        function applyTemplate() {
+            const select = document.getElementById('templateSelect');
+            if (select.value) document.getElementById('msgInput').value = select.value;
         }
+
+        function clearList() {
+            if(confirm("तुम्हाला नक्की सगळं रिसेट करायचं आहे का?")) {
+                excelData = [];
+                document.getElementById('fileInput').value = '';
+                document.getElementById('msgInput').value = '';
+                document.getElementById('fileNameDisplay').innerText = '';
+                updateStats();
+                renderTable();
+            }
+        }
+
+        function exportReport() {
+            if (excelData.length === 0) { alert("डेटा उपलब्ध नाही!"); return; }
+            const exportData = excelData.map(item => ({
+                "नाव": item.name, "नंबर": item.number, "Status": item.status, "Date": new Date().toLocaleDateString()
+            }));
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "RCM_Report");
+            XLSX.writeFile(wb, "RCM_Status_Report_Colorful.xlsx");
+        }
+
+        function updateStats() {
+            const total = excelData.length;
+            const sent = excelData.filter(x => x.status === 'sent').length;
+            
+            // Animate the numbers
+            animateValue(document.getElementById('totalCountDisplay'), document.getElementById('totalCountDisplay').innerText, total, 500);
+            animateValue(document.getElementById('pendingCount'), document.getElementById('pendingCount').innerText, total - sent, 500);
+            animateValue(document.getElementById('sentCountVal'), document.getElementById('sentCountVal').innerText, sent, 500);
+        }
+        
+        // Helper for smooth number transition
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerText = Math.floor(progress * (end - start) + start);
+                if (progress < 1) { window.requestAnimationFrame(step); }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        lucide.createIcons();
     </script>
 </body>
 </html>
