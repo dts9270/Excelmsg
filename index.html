@@ -11,29 +11,13 @@
     
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-        
-        /* Smooth Gradients for text */
-        .text-gradient {
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            background-image: linear-gradient(to right, #ec4899, #8b5cf6);
-        }
-
-        /* Custom Scrollbar */
+        .text-gradient { background-clip: text; -webkit-background-clip: text; color: transparent; background-image: linear-gradient(to right, #ec4899, #8b5cf6); }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #ec4899, #8b5cf6); border-radius: 10px; }
-
-        /* Animations */
         .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
     </style>
 </head>
 <body class="min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-pink-100 via-purple-50 to-blue-100">
@@ -53,10 +37,10 @@
                     </div>
                     RCM डिजिटल मार्केटर
                 </h1>
-                <p class="text-pink-100 mt-3 text-lg font-medium tracking-wide ml-1">बिझनेस वाढीचा नवीन रंगीबेरंगी मार्ग! ✨</p>
+                <p class="text-pink-100 mt-3 text-lg font-medium tracking-wide ml-1">बिझनेस वाढीचा नवीन मार्ग! ✨</p>
             </div>
             
-            <button onclick="exportReport()" class="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 fade-in-up" style="animation-delay: 0.1s">
+            <button onclick="exportReport()" class="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 fade-in-up">
                 <i data-lucide="download-cloud" class="w-5 h-5 group-hover:animate-bounce"></i>
                 रिपोर्ट सेव्ह करा
             </button>
@@ -64,36 +48,27 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 fade-in-up" style="animation-delay: 0.2s">
             <div class="bg-gradient-to-br from-blue-400 to-indigo-600 p-6 rounded-3xl shadow-xl text-white flex items-center justify-between transform hover:scale-105 transition duration-300 relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 text-white/10"><i data-lucide="users" class="w-32 h-32"></i></div>
                 <div class="relative z-10">
                     <p class="text-blue-100 text-sm uppercase font-bold tracking-wider mb-1">एकूण संपर्क</p>
                     <h2 class="text-4xl font-extrabold mt-1" id="totalCountDisplay">0</h2>
                 </div>
-                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner">
-                    <i data-lucide="layers" class="w-8 h-8 text-white"></i>
-                </div>
+                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner"><i data-lucide="layers" class="w-8 h-8 text-white"></i></div>
             </div>
 
             <div class="bg-gradient-to-br from-orange-400 via-pink-500 to-rose-500 p-6 rounded-3xl shadow-xl text-white flex items-center justify-between transform hover:scale-105 transition duration-300 relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 text-white/10"><i data-lucide="clock" class="w-32 h-32"></i></div>
                 <div class="relative z-10">
                     <p class="text-orange-100 text-sm uppercase font-bold tracking-wider mb-1">बाकी (Pending)</p>
                     <h2 class="text-4xl font-extrabold mt-1" id="pendingCount">0</h2>
                 </div>
-                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner">
-                    <i data-lucide="hourglass" class="w-8 h-8 text-white animate-pulse"></i>
-                </div>
+                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner"><i data-lucide="hourglass" class="w-8 h-8 text-white animate-pulse"></i></div>
             </div>
 
             <div class="bg-gradient-to-br from-teal-400 to-emerald-600 p-6 rounded-3xl shadow-xl text-white flex items-center justify-between transform hover:scale-105 transition duration-300 relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 text-white/10"><i data-lucide="check-circle-2" class="w-32 h-32"></i></div>
                 <div class="relative z-10">
                     <p class="text-teal-100 text-sm uppercase font-bold tracking-wider mb-1">पूर्ण (Sent)</p>
                     <h2 class="text-4xl font-extrabold mt-1" id="sentCountVal">0</h2>
                 </div>
-                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner">
-                    <i data-lucide="party-popper" class="w-8 h-8 text-white"></i>
-                </div>
+                <div class="p-4 bg-white/20 rounded-2xl backdrop-blur-sm z-10 shadow-inner"><i data-lucide="party-popper" class="w-8 h-8 text-white"></i></div>
             </div>
         </div>
 
@@ -106,10 +81,9 @@
                         <h3 class="font-bold text-gray-700 text-lg">एक्सेल फाइल जोडा</h3>
                     </div>
                     <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-purple-300 border-dashed rounded-2xl cursor-pointer bg-purple-50/30 hover:bg-purple-100/50 transition group relative overflow-hidden">
-                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 group-hover:opacity-100 transition-opacity opacity-0"></div>
                         <div class="flex flex-col items-center justify-center pt-5 pb-6 relative z-10">
                             <i data-lucide="file-up" class="w-10 h-10 mb-3 text-purple-400 group-hover:text-purple-600 transition group-hover:scale-110 duration-300"></i>
-                            <p class="text-sm font-medium text-gray-600"><span class="text-purple-600 font-bold underline decoration-2 underline-offset-2">क्लिक करा</span> किंवा फाइल ओढा</p>
+                            <p class="text-sm font-medium text-gray-600">फाइल निवडा</p>
                         </div>
                         <input type="file" id="fileInput" accept=".xlsx, .xls" class="hidden" />
                     </label>
@@ -120,39 +94,37 @@
                     <div class="flex items-center justify-between mb-5">
                         <div class="flex items-center gap-3">
                             <span class="bg-pink-100 text-pink-600 text-sm font-black px-3 py-1.5 rounded-full shadow-sm">STEP 2</span>
-                            <h3 class="font-bold text-gray-700 text-lg">मेसेज टाईप करा</h3>
+                            <h3 class="font-bold text-gray-700 text-lg">मेसेज</h3>
                         </div>
                         <div class="relative group">
                              <select id="templateSelect" onchange="applyTemplate()" class="appearance-none pl-4 pr-10 py-2 text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-full cursor-pointer hover:shadow-md transition focus:outline-none">
-                                <option value="" class="text-gray-700 bg-white">✨ तयार मेसेज (Templates)</option>
-                                <option value="नमस्कार {name}, RCM च्या नवीन उत्पादनांची माहिती घेण्यासाठी खालील लिंक पहा." class="text-gray-700 bg-white">📦 प्रोडक्ट माहिती</option>
-                                <option value="नमस्कार {name}, सणांच्या हार्दिक शुभेच्छा! - RCM परिवार." class="text-gray-700 bg-white">🎉 सण शुभेच्छा</option>
-                                <option value="नमस्कार {name}, सेमिनारचे आमंत्रण स्वीकार करा." class="text-gray-700 bg-white">🎤 सेमिनार</option>
+                                <option value="" class="text-gray-700 bg-white">✨ टेम्प्लेट निवडा</option>
+                                <option value="नमस्कार {name} जी, RCM च्या नवीन उत्पादनांची माहिती घेण्यासाठी खालील लिंक पहा." class="text-gray-700 bg-white">📦 प्रोडक्ट माहिती</option>
+                                <option value="नमस्कार {name} जी, तुम्हाला आणि तुमच्या कुटुंबाला सणांच्या हार्दिक शुभेच्छा! - RCM परिवार." class="text-gray-700 bg-white">🎉 सण शुभेच्छा</option>
+                                <option value="नमस्कार {name} जी, सेमिनारचे आमंत्रण स्वीकार करा." class="text-gray-700 bg-white">🎤 सेमिनार</option>
                             </select>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-white absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none"></i>
                         </div>
                     </div>
                     
                     <div class="relative">
-                        <textarea id="msgInput" rows="6" class="w-full p-5 bg-white/50 border-2 border-pink-200 rounded-2xl text-gray-700 focus:border-pink-500 focus:ring-4 focus:ring-pink-200/50 shadow-sm resize-none text-sm transition-all" placeholder="नमस्कार {name}, तुमचा मेसेज इथे लिहा..."></textarea>
+                        <textarea id="msgInput" rows="6" class="w-full p-5 bg-white/50 border-2 border-pink-200 rounded-2xl text-gray-700 focus:border-pink-500 focus:ring-4 focus:ring-pink-200/50 shadow-sm resize-none text-sm transition-all" placeholder="नमस्कार {name} जी, तुमचा मेसेज इथे लिहा..."></textarea>
                         <div class="absolute bottom-3 right-3 text-[10px] text-pink-400 font-bold bg-pink-50 px-2 py-1 rounded-full">Tip: {name} वापरा</div>
                     </div>
                     
                     <div class="mt-5">
                         <button onclick="clearList()" class="w-full py-3 text-sm font-bold text-red-500 bg-red-50/80 border-2 border-red-100 rounded-xl hover:bg-red-100 hover:border-red-300 transition flex items-center justify-center gap-2 group">
-                            <i data-lucide="trash-2" class="w-4 h-4 group-hover:rotate-12 transition"></i> सगळे रिसेट करा (Reset)
+                            <i data-lucide="trash-2" class="w-4 h-4 group-hover:rotate-12 transition"></i> रिसेट करा (Reset)
                         </button>
                     </div>
                 </div>
             </div>
 
             <div class="lg:col-span-2 glass-card rounded-3xl shadow-xl overflow-hidden flex flex-col h-[650px] border-t-4 border-blue-400 relative">
-                
                 <div class="p-5 border-b border-gray-100 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 flex flex-wrap gap-4 items-center justify-between sticky top-0 z-20">
                     <h3 class="font-extrabold text-xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 pl-2 flex items-center gap-2">
                         <i data-lucide="list-checks" class="w-6 h-6 text-blue-500"></i> ग्राहक यादी
                     </h3>
-                    
                     <div class="bg-white/70 p-1.5 rounded-full flex shadow-sm border border-white">
                         <button onclick="setFilter('all')" id="btn-all" class="px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md bg-gradient-to-r from-blue-500 to-purple-500 text-white">सर्व</button>
                         <button onclick="setFilter('pending')" id="btn-pending" class="px-5 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-purple-600 transition-all hover:bg-purple-50">बाकी</button>
@@ -165,46 +137,35 @@
                         <tbody id="tableBody" class="divide-y divide-gray-100/50">
                             <tr>
                                 <td colspan="4" class="p-16 flex flex-col items-center justify-center text-center text-gray-400">
-                                    <div class="bg-purple-50 p-6 rounded-full mb-4 animate-bounce-slow">
-                                        <i data-lucide="sparkles" class="w-16 h-16 text-purple-300"></i>
-                                    </div>
+                                    <div class="bg-purple-50 p-6 rounded-full mb-4 animate-bounce-slow"><i data-lucide="sparkles" class="w-16 h-16 text-purple-300"></i></div>
                                     <span class="text-lg font-medium text-gray-500">यादी रिकामी आहे.</span>
-                                    <span class="text-sm text-purple-400 mt-1">कृपया डावीकडून एक्सेल फाइल जोडा.</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                 <div class="h-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 w-full absolute bottom-0"></div>
             </div>
         </div>
-
-        <div class="text-center mt-10 mb-6 text-gray-500 text-sm font-medium flex items-center justify-center gap-2">
-            Made with <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-red-500"></i> for RCM Success
-        </div>
+        <div class="text-center mt-10 mb-6 text-gray-500 text-sm font-medium">Made for RCM Success</div>
     </div>
 
     <script>
-        // --- Variables ---
         let excelData = []; 
         let currentFilter = 'all';
 
-        // --- 1. Load Excel ---
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             document.getElementById('fileNameDisplay').innerText = "📂 " + file.name;
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { type: 'array' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
 
                 excelData = jsonData.slice(1).map(row => ({
-                    name: row[0] || 'Sir/Ma\'am',
+                    name: row[0] ? row[0].toString().trim() : 'Sir/Ma\'am', // Trim added here
                     number: row[1] ? row[1].toString() : '',
                     status: 'pending'
                 })).filter(item => item.number.length >= 10);
@@ -215,17 +176,15 @@
             reader.readAsArrayBuffer(file);
         });
 
-        // --- 2. Render List (Colourful Rows) ---
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-
             let filteredData = excelData;
             if (currentFilter === 'pending') filteredData = excelData.filter(d => d.status === 'pending');
             if (currentFilter === 'sent') filteredData = excelData.filter(d => d.status === 'sent');
 
             if (filteredData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-12 text-center text-gray-400 text-base font-medium">या फिल्टरमध्ये कोणताही डेटा नाही. ✨</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="p-12 text-center text-gray-400 text-base font-medium">डेटा उपलब्ध नाही. ✨</td></tr>';
                 return;
             }
 
@@ -235,62 +194,34 @@
                 tr.className = "group bg-white/60 hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 transition-all duration-300 rounded-2xl block md:table-row mb-3 border-b border-gray-100/50 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 p-4 md:p-0 relative overflow-hidden";
                 
                 const initials = item.name.substring(0, 1).toUpperCase();
-                // Colorful Avatar
-                const avatarBg = item.status === 'sent' 
-                    ? 'bg-gradient-to-br from-gray-300 to-gray-400' 
-                    : 'bg-gradient-to-br from-pink-400 to-purple-500 text-white shadow-lg shadow-purple-200';
+                const avatarBg = item.status === 'sent' ? 'bg-gray-300 text-gray-500' : 'bg-gradient-to-br from-pink-400 to-purple-500 text-white shadow-lg shadow-purple-200';
 
-                let actionBtn = '';
-                if (item.status === 'sent') {
-                    actionBtn = `
-                        <button disabled class="w-full md:w-auto px-5 py-2.5 bg-gray-100/80 text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200">
-                            <i data-lucide="check-check" class="w-4 h-4"></i> SENT
-                        </button>`;
-                } else {
-                    // Hero "Send" Button (Colorful Gradient)
-                    actionBtn = `
-                        <button onclick="sendWhatsApp(${originalIndex})" class="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 hover:from-orange-500 hover:to-purple-600 text-white rounded-xl text-xs font-extrabold shadow-md hover:shadow-xl hover:scale-105 transition-all transform flex items-center justify-center gap-2 group-btn overflow-hidden relative">
-                            <div class="absolute inset-0 bg-white/20 group-btn-hover:opacity-0 transition-opacity"></div>
-                            <i data-lucide="send" class="w-4 h-4 group-btn-hover:translate-x-1 transition-transform"></i> पाठवा
-                        </button>`;
-                }
+                let actionBtn = item.status === 'sent' 
+                    ? `<button disabled class="w-full md:w-auto px-5 py-2.5 bg-gray-100 text-gray-400 rounded-xl text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2 border"><i data-lucide="check-check" class="w-4 h-4"></i> SENT</button>`
+                    : `<button onclick="sendWhatsApp(${originalIndex})" class="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 text-white rounded-xl text-xs font-extrabold shadow-md hover:scale-105 transition flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> पाठवा</button>`;
 
                 tr.innerHTML = `
-                    <td class="p-4 w-20 hidden md:table-cell text-center">
-                        <div class="w-12 h-12 ${avatarBg} rounded-2xl flex items-center justify-center font-extrabold text-lg shadow-sm mx-auto">
-                            ${initials}
-                        </div>
-                    </td>
+                    <td class="p-4 w-20 hidden md:table-cell text-center"><div class="w-12 h-12 ${avatarBg} rounded-2xl flex items-center justify-center font-extrabold text-lg shadow-sm mx-auto">${initials}</div></td>
                     <td class="p-4">
-                        <div class="flex items-center gap-3 md:hidden mb-3">
-                             <div class="w-10 h-10 ${avatarBg} rounded-xl flex items-center justify-center font-bold shadow-sm">${initials}</div>
-                        </div>
+                        <div class="flex items-center gap-3 md:hidden mb-3"><div class="w-10 h-10 ${avatarBg} rounded-xl flex items-center justify-center font-bold shadow-sm">${initials}</div></div>
                         <div class="font-bold text-gray-800 text-base group-hover:text-purple-700 transition">${item.name}</div>
-                        <div class="text-sm text-gray-500 font-semibold mt-1 flex items-center gap-1.5">
-                            <i data-lucide="smartphone" class="w-3.5 h-3.5 text-pink-400"></i> ${item.number}
-                        </div>
+                        <div class="text-sm text-gray-500 font-semibold mt-1 flex items-center gap-1.5"><i data-lucide="smartphone" class="w-3.5 h-3.5 text-pink-400"></i> ${item.number}</div>
                     </td>
-                    <td class="p-4 text-right">
-                        <div class="flex items-center justify-end gap-3 mt-4 md:mt-0">
-                            <a href="tel:${item.number}" class="p-2.5 bg-white border-2 border-blue-100 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all shadow-sm hover:shadow-md hover:-translate-y-1" title="कॉल करा">
-                                <i data-lucide="phone" class="w-4 h-4"></i>
-                            </a>
-                            ${actionBtn}
-                        </div>
-                    </td>
+                    <td class="p-4 text-right"><div class="flex items-center justify-end gap-3 mt-4 md:mt-0"><a href="tel:${item.number}" class="p-2.5 bg-white border-2 border-blue-100 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition shadow-sm"><i data-lucide="phone" class="w-4 h-4"></i></a>${actionBtn}</div></td>
                 `;
                 tbody.appendChild(tr);
             });
             lucide.createIcons();
         }
 
-        // --- 3. Actions (Functions remain similar, UI updated) ---
         function sendWhatsApp(index) {
             const item = excelData[index];
             let rawMsg = document.getElementById('msgInput').value;
             if (!rawMsg.trim()) { alert("कृपया आधी मेसेज लिहा!"); return; }
 
+            // LOGIC FOR JI IS HANDLED IN TEMPLATE, BUT WE KEEP BASIC REPLACE HERE
             let finalMsg = rawMsg.replace(/{name}/g, item.name);
+            
             let cleanNumber = item.number.replace(/[^0-9]/g, '');
             if (cleanNumber.length === 10) cleanNumber = '91' + cleanNumber;
 
@@ -305,11 +236,9 @@
             currentFilter = filterType;
             ['all', 'pending', 'sent'].forEach(f => {
                 const btn = document.getElementById(`btn-${f}`);
-                if (f === filterType) {
-                    btn.className = "px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md bg-gradient-to-r from-blue-500 to-purple-500 text-white scale-105";
-                } else {
-                    btn.className = "px-5 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-purple-600 transition-all hover:bg-purple-50";
-                }
+                btn.className = (f === filterType) 
+                    ? "px-5 py-2 rounded-full text-sm font-bold transition-all shadow-md bg-gradient-to-r from-blue-500 to-purple-500 text-white scale-105"
+                    : "px-5 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-purple-600 transition-all hover:bg-purple-50";
             });
             renderTable();
         }
@@ -331,40 +260,22 @@
         }
 
         function exportReport() {
-            if (excelData.length === 0) { alert("डेटा उपलब्ध नाही!"); return; }
-            const exportData = excelData.map(item => ({
-                "नाव": item.name, "नंबर": item.number, "Status": item.status, "Date": new Date().toLocaleDateString()
-            }));
-            const ws = XLSX.utils.json_to_sheet(exportData);
+            if (excelData.length === 0) return;
+            const ws = XLSX.utils.json_to_sheet(excelData.map(i => ({ "नाव": i.name, "नंबर": i.number, "Status": i.status })));
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "RCM_Report");
-            XLSX.writeFile(wb, "RCM_Status_Report_Colorful.xlsx");
+            XLSX.writeFile(wb, "RCM_Report.xlsx");
         }
 
         function updateStats() {
             const total = excelData.length;
             const sent = excelData.filter(x => x.status === 'sent').length;
-            
-            // Animate the numbers
-            animateValue(document.getElementById('totalCountDisplay'), document.getElementById('totalCountDisplay').innerText, total, 500);
-            animateValue(document.getElementById('pendingCount'), document.getElementById('pendingCount').innerText, total - sent, 500);
-            animateValue(document.getElementById('sentCountVal'), document.getElementById('sentCountVal').innerText, sent, 500);
-        }
-        
-        // Helper for smooth number transition
-        function animateValue(obj, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                obj.innerText = Math.floor(progress * (end - start) + start);
-                if (progress < 1) { window.requestAnimationFrame(step); }
-            };
-            window.requestAnimationFrame(step);
+            document.getElementById('totalCountDisplay').innerText = total;
+            document.getElementById('pendingCount').innerText = total - sent;
+            document.getElementById('sentCountVal').innerText = sent;
         }
 
         lucide.createIcons();
     </script>
 </body>
 </html>
-
