@@ -35,7 +35,7 @@
                     </div>
                     RCM डिजिटल मार्केटर
                 </h1>
-                <p class="text-pink-100 mt-2 text-lg font-medium ml-1">नमस्कार {नाव} जी, ऑटोमॅटिक सेट केले आहे! ✨</p>
+                <p class="text-pink-100 mt-2 text-lg font-medium ml-1">नमस्कार {नाव} जी, तुमचा डेटा सुरक्षित आहे! ✨</p>
             </div>
             <button onclick="exportReport()" class="px-6 py-3 bg-white text-purple-600 rounded-full text-sm font-bold shadow-lg hover:scale-105 transition flex gap-2">
                 <i data-lucide="download-cloud" class="w-5 h-5"></i> रिपोर्ट सेव्ह करा
@@ -76,7 +76,7 @@
                     <textarea id="msgInput" rows="5" class="w-full p-4 bg-white/60 border-2 border-pink-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 outline-none transition text-gray-700 text-sm" placeholder="इथे फक्त तुमचा मेसेज लिहा (उदा. उद्या सेमिनार आहे)..."></textarea>
                     
                     <button onclick="clearList()" class="mt-4 w-full py-2 text-sm text-red-500 bg-red-50 rounded-lg hover:bg-red-100 flex justify-center gap-2 font-semibold">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i> रिसेट करा
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> रिसेट करा (सर्व डेटा पुसा)
                     </button>
                 </div>
             </div>
@@ -94,7 +94,7 @@
                 <div class="overflow-y-auto flex-1 p-4 bg-white/40">
                     <table class="w-full">
                         <tbody id="tableBody">
-                            <tr><td colspan="4" class="text-center p-10 text-gray-400">फाइल अपलोड करा...</td></tr>
+                            <tr><td colspan="4" class="text-center p-10 text-gray-400">डेटा लोड होत आहे किंवा फाइल अपलोड करा...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -105,6 +105,35 @@
     <script>
         let excelData = [];
         let currentFilter = 'all';
+
+        // 1. पेज लोड झाल्यावर जुना डेटा (Local Storage) तपासा
+        window.onload = function() {
+            const savedData = localStorage.getItem('rcmData');
+            const savedMsg = localStorage.getItem('rcmMsg');
+
+            if (savedData) {
+                excelData = JSON.parse(savedData);
+                updateStats();
+                renderTable();
+            } else {
+                document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" class="text-center p-10 text-gray-400">फाइल अपलोड करा...</td></tr>';
+            }
+
+            if (savedMsg) {
+                document.getElementById('msgInput').value = savedMsg;
+            }
+            lucide.createIcons();
+        };
+
+        // 2. डेटा Local Storage मध्ये सेव्ह करा
+        function saveToLocal() {
+            localStorage.setItem('rcmData', JSON.stringify(excelData));
+        }
+
+        // 3. मेसेज टाइप करताना सुद्धा सेव्ह करा
+        document.getElementById('msgInput').addEventListener('input', function(e) {
+            localStorage.setItem('rcmMsg', e.target.value);
+        });
 
         // Load Excel
         document.getElementById('fileInput').addEventListener('change', function(e) {
@@ -118,19 +147,21 @@
                 const workbook = XLSX.read(data, { type: 'array' });
                 const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
 
+                // जुन्या डेटा मध्ये नवीन डेटा ॲड करा किंवा रिप्लेस करा (येथे रिप्लेस केला आहे)
                 excelData = jsonData.slice(1).map(row => ({
                     name: row[0] ? row[0].toString().trim() : 'Sir/Ma\'am',
                     number: row[1] ? row[1].toString() : '',
                     status: 'pending'
                 })).filter(item => item.number.length >= 10);
 
+                saveToLocal(); // सेव्ह करा
                 updateStats();
                 renderTable();
             };
             reader.readAsArrayBuffer(file);
         });
 
-        // Send Message Logic (Automatic Greeting)
+        // Send Message Logic
         function sendWhatsApp(index) {
             const item = excelData[index];
             let rawMsg = document.getElementById('msgInput').value;
@@ -138,9 +169,6 @@
             if (!rawMsg.trim()) { alert("कृपया मेसेज लिहा!"); return; }
 
             let finalMsg = "";
-
-            // जर वापरकर्त्याने {name} वापरले असेल तर ते वापरा, 
-            // नाहीतर "नमस्कार [नाव] जी," आपोआप जोडा.
             if (rawMsg.includes("{name}")) {
                 finalMsg = rawMsg.replace(/{name}/g, item.name);
             } else {
@@ -153,6 +181,8 @@
             window.open(`https://wa.me/${cleanNumber}?text=${encodeURIComponent(finalMsg)}`, '_blank');
 
             excelData[index].status = 'sent';
+            
+            saveToLocal(); // स्टेटस बदलल्यानंतर लगेच सेव्ह करा
             updateStats();
             renderTable();
         }
@@ -206,8 +236,11 @@
         }
 
         function clearList() {
-            if(confirm("सर्व लिस्ट डिलीट करायची का?")) {
+            if(confirm("सर्व डेटा कायमचा डिलीट करायचा का? (हे परत आणता येणार नाही)")) {
                 excelData = [];
+                localStorage.removeItem('rcmData'); // स्टोरेज क्लिअर करा
+                localStorage.removeItem('rcmMsg');
+                
                 document.getElementById('fileInput').value = '';
                 document.getElementById('msgInput').value = '';
                 updateStats();
