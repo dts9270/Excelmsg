@@ -35,7 +35,7 @@
                     </div>
                     RCM डिजिटल मार्केटर
                 </h1>
-                <p class="text-pink-100 mt-2 text-lg font-medium ml-1">नमस्कार {नाव} जी, तुमचा डेटा सुरक्षित आहे! ✨</p>
+                <p class="text-pink-100 mt-2 text-lg font-medium ml-1">नमस्कार, तुमचा डेटा सुरक्षित आहे! ✨</p>
             </div>
             <button onclick="exportReport()" class="px-6 py-3 bg-white text-purple-600 rounded-full text-sm font-bold shadow-lg hover:scale-105 transition flex gap-2">
                 <i data-lucide="download-cloud" class="w-5 h-5"></i> रिपोर्ट सेव्ह करा
@@ -62,18 +62,25 @@
             <div class="lg:col-span-1 space-y-6">
                 <div class="glass-card p-6 rounded-3xl shadow-lg border-t-4 border-purple-400">
                     <h3 class="font-bold text-gray-700 text-lg mb-4 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="text-purple-500"></i> एक्सेल फाइल जोडा</h3>
-                    <input type="file" id="fileInput" accept=".xlsx, .xls" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200 cursor-pointer border rounded-lg p-2 bg-white/50">
+                    <input type="file" id="fileInput" accept=".xlsx, .xls" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-purple-100 file:text-purple-700 cursor-pointer border rounded-lg p-2 bg-white/50">
                     <p id="fileNameDisplay" class="text-xs text-purple-500 mt-2 font-medium"></p>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl shadow-lg border-t-4 border-blue-400">
+                    <h3 class="font-bold text-gray-700 text-lg mb-4 flex items-center gap-2"><i data-lucide="map-pin" class="text-blue-500"></i> शहर निवडा</h3>
+                    <select id="cityFilter" onchange="renderTable()" class="w-full p-3 rounded-xl border-2 border-blue-100 outline-none bg-white text-gray-700 font-medium shadow-sm">
+                        <option value="all">सर्व शहरे</option>
+                    </select>
                 </div>
 
                 <div class="glass-card p-6 rounded-3xl shadow-lg border-t-4 border-pink-400">
                     <h3 class="font-bold text-gray-700 text-lg mb-2 flex items-center gap-2"><i data-lucide="message-circle" class="text-pink-500"></i> मेसेज लिहा</h3>
                     
                     <div class="bg-pink-50 border border-pink-200 p-3 rounded-xl mb-3 text-xs text-pink-700">
-                        <strong>टीप:</strong> "नमस्कार [नाव] जी" आपोआप जोडले जाईल. तुम्ही फक्त मुख्य मेसेज लिहा.
+                        <strong>टीप:</strong> "नमस्कार [नाव] जी" आपोआप जोडले जाईल.
                     </div>
 
-                    <textarea id="msgInput" rows="5" class="w-full p-4 bg-white/60 border-2 border-pink-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 outline-none transition text-gray-700 text-sm" placeholder="इथे फक्त तुमचा मेसेज लिहा (उदा. उद्या सेमिनार आहे)..."></textarea>
+                    <textarea id="msgInput" rows="5" class="w-full p-4 bg-white/60 border-2 border-pink-200 rounded-xl focus:border-pink-500 focus:ring-4 focus:ring-pink-100 outline-none transition text-gray-700 text-sm" placeholder="इथे फक्त तुमचा मेसेज लिहा..."></textarea>
                     
                     <button onclick="clearList()" class="mt-4 w-full py-2 text-sm text-red-500 bg-red-50 rounded-lg hover:bg-red-100 flex justify-center gap-2 font-semibold">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> रिसेट करा (सर्व डेटा पुसा)
@@ -85,16 +92,15 @@
                 <div class="p-5 bg-gradient-to-r from-blue-50 to-purple-50 border-b flex justify-between items-center sticky top-0 z-20">
                     <h3 class="font-bold text-xl text-blue-700 flex items-center gap-2"><i data-lucide="list" class="w-5 h-5"></i> ग्राहक यादी</h3>
                     <div class="flex bg-white rounded-full p-1 shadow-sm">
-                        <button onclick="setFilter('all')" id="btn-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow">सर्व</button>
-                        <button onclick="setFilter('pending')" id="btn-pending" class="px-4 py-1.5 rounded-full text-xs font-bold text-gray-500 hover:bg-purple-50">बाकी</button>
-                        <button onclick="setFilter('sent')" id="btn-sent" class="px-4 py-1.5 rounded-full text-xs font-bold text-gray-500 hover:bg-green-50">झालेले</button>
+                        <button onclick="setStatusFilter('all')" id="btn-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow">सर्व</button>
+                        <button onclick="setStatusFilter('pending')" id="btn-pending" class="px-4 py-1.5 rounded-full text-xs font-bold text-gray-500">बाकी</button>
                     </div>
                 </div>
 
                 <div class="overflow-y-auto flex-1 p-4 bg-white/40">
                     <table class="w-full">
                         <tbody id="tableBody">
-                            <tr><td colspan="4" class="text-center p-10 text-gray-400">डेटा लोड होत आहे किंवा फाइल अपलोड करा...</td></tr>
+                            <tr><td colspan="4" class="text-center p-10 text-gray-400">फाइल अपलोड करा...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -104,38 +110,23 @@
 
     <script>
         let excelData = [];
-        let currentFilter = 'all';
+        let currentStatusFilter = 'all';
 
-        // 1. पेज लोड झाल्यावर जुना डेटा (Local Storage) तपासा
         window.onload = function() {
-            const savedData = localStorage.getItem('rcmData');
-            const savedMsg = localStorage.getItem('rcmMsg');
-
+            const savedData = localStorage.getItem('rcmOriginalData');
+            const savedMsg = localStorage.getItem('rcmOriginalMsg');
             if (savedData) {
                 excelData = JSON.parse(savedData);
+                updateCityDropdown();
                 updateStats();
                 renderTable();
-            } else {
-                document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" class="text-center p-10 text-gray-400">फाइल अपलोड करा...</td></tr>';
             }
-
-            if (savedMsg) {
-                document.getElementById('msgInput').value = savedMsg;
-            }
+            if (savedMsg) document.getElementById('msgInput').value = savedMsg;
             lucide.createIcons();
         };
 
-        // 2. डेटा Local Storage मध्ये सेव्ह करा
-        function saveToLocal() {
-            localStorage.setItem('rcmData', JSON.stringify(excelData));
-        }
+        document.getElementById('msgInput').addEventListener('input', (e) => localStorage.setItem('rcmOriginalMsg', e.target.value));
 
-        // 3. मेसेज टाइप करताना सुद्धा सेव्ह करा
-        document.getElementById('msgInput').addEventListener('input', function(e) {
-            localStorage.setItem('rcmMsg', e.target.value);
-        });
-
-        // Load Excel
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -147,74 +138,70 @@
                 const workbook = XLSX.read(data, { type: 'array' });
                 const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
 
-                // जुन्या डेटा मध्ये नवीन डेटा ॲड करा किंवा रिप्लेस करा (येथे रिप्लेस केला आहे)
                 excelData = jsonData.slice(1).map(row => ({
                     name: row[0] ? row[0].toString().trim() : 'Sir/Ma\'am',
-                    number: row[1] ? row[1].toString() : '',
+                    number: row[1] ? row[1].toString().trim() : '',
+                    city: row[2] ? row[2].toString().trim() : 'इतर',
                     status: 'pending'
                 })).filter(item => item.number.length >= 10);
 
-                saveToLocal(); // सेव्ह करा
+                localStorage.setItem('rcmOriginalData', JSON.stringify(excelData));
+                updateCityDropdown();
                 updateStats();
                 renderTable();
             };
             reader.readAsArrayBuffer(file);
         });
 
-        // Send Message Logic
-        function sendWhatsApp(index) {
-            const item = excelData[index];
-            let rawMsg = document.getElementById('msgInput').value;
-            
-            if (!rawMsg.trim()) { alert("कृपया मेसेज लिहा!"); return; }
+        function updateCityDropdown() {
+            const dropdown = document.getElementById('cityFilter');
+            const cities = [...new Set(excelData.map(item => item.city))];
+            dropdown.innerHTML = '<option value="all">सर्व शहरे</option>';
+            cities.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.innerText = city;
+                dropdown.appendChild(opt);
+            });
+        }
 
-            let finalMsg = "";
-            if (rawMsg.includes("{name}")) {
-                finalMsg = rawMsg.replace(/{name}/g, item.name);
-            } else {
-                finalMsg = `नमस्कार ${item.name} जी,\n\n${rawMsg}`;
-            }
-
-            let cleanNumber = item.number.replace(/[^0-9]/g, '');
-            if (cleanNumber.length === 10) cleanNumber = '91' + cleanNumber;
-
-            window.open(`https://wa.me/${cleanNumber}?text=${encodeURIComponent(finalMsg)}`, '_blank');
-
-            excelData[index].status = 'sent';
-            
-            saveToLocal(); // स्टेटस बदलल्यानंतर लगेच सेव्ह करा
-            updateStats();
+        function setStatusFilter(f) {
+            currentStatusFilter = f;
+            document.getElementById('btn-all').className = f === 'all' ? "px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow" : "px-4 py-1.5 rounded-full text-xs font-bold text-gray-500 hover:bg-gray-100";
+            document.getElementById('btn-pending').className = f === 'pending' ? "px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow" : "px-4 py-1.5 rounded-full text-xs font-bold text-gray-500 hover:bg-gray-100";
             renderTable();
         }
 
-        // UI Rendering (Table)
         function renderTable() {
             const tbody = document.getElementById('tableBody');
+            const selectedCity = document.getElementById('cityFilter').value;
             tbody.innerHTML = '';
             
-            let filteredData = excelData;
-            if (currentFilter === 'pending') filteredData = excelData.filter(d => d.status === 'pending');
-            if (currentFilter === 'sent') filteredData = excelData.filter(d => d.status === 'sent');
+            let filtered = excelData.filter(d => {
+                const cityMatch = (selectedCity === 'all' || d.city === selectedCity);
+                const statusMatch = (currentStatusFilter === 'all' || d.status === currentStatusFilter);
+                return cityMatch && statusMatch;
+            });
 
-            if (filteredData.length === 0) {
+            if (filtered.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-gray-500">डेटा नाही.</td></tr>';
                 return;
             }
 
-            filteredData.forEach((item) => {
-                const originalIndex = excelData.indexOf(item);
+            filtered.forEach((item) => {
+                const idx = excelData.indexOf(item);
                 const tr = document.createElement('tr');
-                tr.className = "bg-white/80 border-b border-gray-100 hover:bg-purple-50 transition rounded-xl block md:table-row mb-2 shadow-sm";
+                tr.className = "bg-white/80 border-b border-gray-100 hover:bg-purple-50 transition block md:table-row mb-2 shadow-sm rounded-xl";
                 
                 const btn = item.status === 'sent' 
-                    ? `<button disabled class="px-4 py-2 bg-gray-200 text-gray-500 rounded-lg text-xs font-bold cursor-not-allowed">SENT</button>`
-                    : `<button onclick="sendWhatsApp(${originalIndex})" class="px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg text-xs font-bold shadow-md hover:scale-105 transition">पाठवा</button>`;
+                    ? `<button disabled class="px-4 py-2 bg-gray-200 text-gray-500 rounded-lg text-xs font-bold">SENT</button>`
+                    : `<button onclick="sendWhatsApp(${idx})" class="px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg text-xs font-bold shadow-md hover:scale-105 transition">पाठवा</button>`;
 
                 tr.innerHTML = `
-                    <td class="p-4 font-bold text-gray-700">${item.name}</td>
+                    <td class="p-4 font-bold text-gray-700">${item.name}<br><span class="text-[10px] text-blue-500 font-normal uppercase">${item.city}</span></td>
                     <td class="p-4 text-sm text-gray-500 font-mono">${item.number}</td>
                     <td class="p-4 text-right flex justify-end gap-2">
-                        <a href="tel:${item.number}" class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"><i data-lucide="phone" class="w-4 h-4"></i></a>
+                        <a href="tel:${item.number}" class="p-2 bg-blue-100 text-blue-600 rounded-lg"><i data-lucide="phone" class="w-4 h-4"></i></a>
                         ${btn}
                     </td>
                 `;
@@ -223,47 +210,41 @@
             lucide.createIcons();
         }
 
-        // Helper Functions
-        function setFilter(filterType) {
-            currentFilter = filterType;
-            ['all', 'pending', 'sent'].forEach(f => {
-                const btn = document.getElementById(`btn-${f}`);
-                btn.className = (f === filterType) 
-                    ? "px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow scale-105 transition"
-                    : "px-4 py-1.5 rounded-full text-xs font-bold text-gray-500 hover:bg-gray-100 transition";
-            });
+        function sendWhatsApp(index) {
+            const item = excelData[index];
+            const msg = document.getElementById('msgInput').value;
+            if (!msg) { alert("मेसेज लिहा!"); return; }
+
+            const finalMsg = `नमस्कार ${item.name} जी,\n\n${msg}`;
+            let num = item.number.replace(/[^0-9]/g, '');
+            if (num.length === 10) num = '91' + num;
+
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(finalMsg)}`, '_blank');
+            excelData[index].status = 'sent';
+            localStorage.setItem('rcmOriginalData', JSON.stringify(excelData));
+            updateStats();
             renderTable();
         }
 
+        function updateStats() {
+            document.getElementById('totalCountDisplay').innerText = excelData.length;
+            document.getElementById('pendingCount').innerText = excelData.filter(x => x.status === 'pending').length;
+            document.getElementById('sentCountVal').innerText = excelData.filter(x => x.status === 'sent').length;
+        }
+
         function clearList() {
-            if(confirm("सर्व डेटा कायमचा डिलीट करायचा का? (हे परत आणता येणार नाही)")) {
-                excelData = [];
-                localStorage.removeItem('rcmData'); // स्टोरेज क्लिअर करा
-                localStorage.removeItem('rcmMsg');
-                
-                document.getElementById('fileInput').value = '';
-                document.getElementById('msgInput').value = '';
-                updateStats();
-                renderTable();
+            if(confirm("डेटा डिलीट करायचा का?")) {
+                localStorage.clear();
+                location.reload();
             }
         }
 
         function exportReport() {
-            if (excelData.length === 0) return;
-            const ws = XLSX.utils.json_to_sheet(excelData.map(i => ({ "Name": i.name, "Number": i.number, "Status": i.status })));
+            const ws = XLSX.utils.json_to_sheet(excelData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Report");
             XLSX.writeFile(wb, "RCM_Report.xlsx");
         }
-
-        function updateStats() {
-            const total = excelData.length;
-            const sent = excelData.filter(x => x.status === 'sent').length;
-            document.getElementById('totalCountDisplay').innerText = total;
-            document.getElementById('pendingCount').innerText = total - sent;
-            document.getElementById('sentCountVal').innerText = sent;
-        }
-
         lucide.createIcons();
     </script>
 </body>
