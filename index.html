@@ -11,16 +11,10 @@
     
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #ec4899, #8b5cf6); border-radius: 10px; }
         .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        /* Multiple select styling */
-        select[multiple] { height: 140px; scrollbar-width: thin; }
-        select option { padding: 8px; border-bottom: 1px solid #f0f0f0; border-radius: 4px; margin-bottom: 2px; }
-        select option:checked { background: #8b5cf6 linear-gradient(0deg, #8b5cf6 0%, #8b5cf6 100%); color: white; }
+        select[multiple] { height: 150px; border: 2px solid #e2e8f0; border-radius: 12px; padding: 5px; }
+        select option { padding: 10px; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        select option:checked { background-color: #8b5cf6 !important; color: white; }
     </style>
 </head>
 <body class="min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-pink-100 via-purple-50 to-blue-100">
@@ -30,36 +24,36 @@
     <div class="relative z-10 max-w-6xl mx-auto p-4 md:p-8">
         
         <div class="flex flex-col md:flex-row justify-between items-center text-white mb-8">
-            <div class="mb-6 md:mb-0 text-center md:text-left fade-in-up">
-                <h1 class="text-4xl font-extrabold flex items-center justify-center md:justify-start gap-3 drop-shadow-md">
+            <div class="mb-6 md:mb-0 text-center md:text-left">
+                <h1 class="text-4xl font-extrabold flex items-center justify-center md:justify-start gap-3">
                     <div class="p-3 bg-white/25 rounded-2xl backdrop-blur-md">
                         <i data-lucide="rocket" class="w-8 h-8 text-yellow-300"></i>
                     </div>
                     RCM डिजिटल मार्केटर
                 </h1>
-                <p class="text-pink-100 mt-2 text-lg font-medium ml-1">तुमचा डेटा शहरांनुसार फिल्टर करा! ✨</p>
+                <p class="text-pink-100 mt-2 text-lg font-medium ml-1">शहरे निवडा आणि फिल्टर बटण दाबा! ✨</p>
             </div>
             <button onclick="exportReport()" class="px-6 py-3 bg-white text-purple-600 rounded-full text-sm font-bold shadow-lg hover:scale-105 transition flex gap-2">
                 <i data-lucide="download-cloud" class="w-5 h-5"></i> रिपोर्ट सेव्ह करा
             </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in-up">
-            <div class="bg-gradient-to-br from-blue-400 to-indigo-600 p-6 rounded-3xl shadow-xl text-white flex justify-between">
-                <div><p class="text-blue-100 font-bold text-sm">एकूण संपर्क</p><h2 class="text-4xl font-extrabold" id="totalCountDisplay">0</h2></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-blue-400 to-indigo-600 p-6 rounded-3xl shadow-xl text-white flex justify-between transform hover:scale-105 transition">
+                <div><p class="text-blue-100 font-bold text-sm uppercase">एकूण संपर्क</p><h2 class="text-4xl font-extrabold" id="totalCountDisplay">0</h2></div>
                 <div class="bg-white/20 p-4 rounded-2xl"><i data-lucide="users" class="w-8 h-8 text-white"></i></div>
             </div>
-            <div class="bg-gradient-to-br from-orange-400 via-pink-500 to-rose-500 p-6 rounded-3xl shadow-xl text-white flex justify-between">
-                <div><p class="text-pink-100 font-bold text-sm">बाकी (Pending)</p><h2 class="text-4xl font-extrabold" id="pendingCount">0</h2></div>
-                <div class="bg-white/20 p-4 rounded-2xl"><i data-lucide="clock" class="w-8 h-8 text-white animate-pulse"></i></div>
+            <div class="bg-gradient-to-br from-orange-400 via-pink-500 to-rose-500 p-6 rounded-3xl shadow-xl text-white flex justify-between transform hover:scale-105 transition">
+                <div><p class="text-pink-100 font-bold text-sm uppercase">बाकी (Pending)</p><h2 class="text-4xl font-extrabold" id="pendingCount">0</h2></div>
+                <div class="bg-white/20 p-4 rounded-2xl"><i data-lucide="clock" class="w-8 h-8 text-white"></i></div>
             </div>
-            <div class="bg-gradient-to-br from-teal-400 to-emerald-600 p-6 rounded-3xl shadow-xl text-white flex justify-between">
-                <div><p class="text-teal-100 font-bold text-sm">पूर्ण (Sent)</p><h2 class="text-4xl font-extrabold" id="sentCountVal">0</h2></div>
+            <div class="bg-gradient-to-br from-teal-400 to-emerald-600 p-6 rounded-3xl shadow-xl text-white flex justify-between transform hover:scale-105 transition">
+                <div><p class="text-teal-100 font-bold text-sm uppercase">पूर्ण (Sent)</p><h2 class="text-4xl font-extrabold" id="sentCountVal">0</h2></div>
                 <div class="bg-white/20 p-4 rounded-2xl"><i data-lucide="check-circle" class="w-8 h-8 text-white"></i></div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 fade-in-up">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
             <div class="lg:col-span-1 space-y-6">
                 <div class="glass-card p-6 rounded-3xl shadow-lg border-t-4 border-purple-400">
@@ -68,21 +62,25 @@
                 </div>
 
                 <div class="glass-card p-6 rounded-3xl shadow-lg border-t-4 border-blue-400">
-                    <h3 class="font-bold text-gray-700 text-lg mb-2 flex items-center gap-2"><i data-lucide="map-pin" class="text-blue-500"></i> शहरे निवडा</h3>
-                    <select id="cityFilter" multiple class="w-full p-2 rounded-xl border-2 border-blue-100 outline-none bg-white text-gray-700 font-medium shadow-sm">
+                    <h3 class="font-bold text-gray-700 text-lg mb-2 flex items-center gap-2"><i data-lucide="map-pin" class="text-blue-500"></i> १. शहरे निवडा</h3>
+                    <p class="text-[10px] text-blue-500 mb-2 font-bold">शहरावर क्लिक करून खालील निळे बटण दाबा.</p>
+                    <select id="cityFilter" multiple class="w-full bg-white outline-none shadow-inner mb-4">
                         <option value="all" selected>सर्व शहरे (All)</option>
                     </select>
+                    <button onclick="renderTable()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition flex justify-center gap-2">
+                        <i data-lucide="filter" class="w-5 h-5"></i> फिल्टर अप्लाय करा
+                    </button>
                 </div>
 
                 <div class="glass-card p-6 rounded-3xl shadow-lg border-t-4 border-pink-400">
-                    <h3 class="font-bold text-gray-700 text-lg mb-2 flex items-center gap-2"><i data-lucide="message-circle" class="text-pink-500"></i> मेसेज लिहा</h3>
-                    <textarea id="msgInput" rows="5" class="w-full p-4 border-2 border-pink-200 rounded-xl outline-none text-sm" placeholder="इथे तुमचा मेसेज लिहा..."></textarea>
-                    <button onclick="clearList()" class="mt-4 w-full py-2 text-sm text-red-500 bg-red-50 rounded-lg font-semibold uppercase">रिसेट करा</button>
+                    <h3 class="font-bold text-gray-700 text-lg mb-2 flex items-center gap-2"><i data-lucide="message-circle" class="text-pink-500"></i> २. मेसेज लिहा</h3>
+                    <textarea id="msgInput" rows="5" class="w-full p-4 border-2 border-pink-200 rounded-xl outline-none text-sm" placeholder="तुमचा मेसेज..."></textarea>
+                    <button onclick="clearList()" class="mt-4 w-full py-2 text-xs text-red-500 bg-red-50 rounded-lg font-bold">रिसेट करा</button>
                 </div>
             </div>
 
             <div class="lg:col-span-2 glass-card rounded-3xl shadow-xl overflow-hidden flex flex-col h-[600px] border-t-4 border-blue-400 relative">
-                <div class="p-5 bg-white border-b flex justify-between items-center sticky top-0 z-20">
+                <div class="p-5 bg-white/90 border-b flex justify-between items-center sticky top-0 z-20">
                     <h3 class="font-bold text-xl text-blue-700 flex items-center gap-2"><i data-lucide="list"></i> ग्राहक यादी</h3>
                     <div class="flex bg-gray-100 rounded-full p-1">
                         <button onclick="setStatusFilter('all')" id="btn-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow">सर्व</button>
@@ -91,9 +89,9 @@
                 </div>
 
                 <div class="overflow-y-auto flex-1 p-4 bg-white/40">
-                    <table class="w-full text-left">
+                    <table class="w-full">
                         <tbody id="tableBody">
-                            <tr><td class="text-center p-10 text-gray-400">फाइल अपलोड करा...</td></tr>
+                            <tr><td class="text-center p-10 text-gray-400">एक्सेल फाइल जोडून 'फिल्टर अप्लाय' करा.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -104,10 +102,6 @@
     <script>
         let excelData = [];
         let currentStatusFilter = 'all';
-
-        // इव्हेंट लिसनर्स जोडणे (Dropdown बदलल्यास लगेच काम करेल)
-        document.getElementById('cityFilter').addEventListener('change', renderTable);
-        document.getElementById('cityFilter').addEventListener('input', renderTable);
 
         window.onload = function() {
             const savedData = localStorage.getItem('rcmOriginalData');
@@ -168,20 +162,17 @@
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             const citySelect = document.getElementById('cityFilter');
-            
-            // निवडलेल्या सर्व शहरांची यादी घ्या
-            const selectedCities = Array.from(citySelect.selectedOptions).map(option => option.value);
+            const selectedOptions = Array.from(citySelect.selectedOptions).map(option => option.value);
             
             tbody.innerHTML = '';
             
             let filtered = excelData.filter(d => {
-                const isAllSelected = selectedCities.includes('all') || selectedCities.length === 0;
-                const cityMatch = isAllSelected || selectedCities.includes(d.city);
+                const cityMatch = selectedOptions.includes('all') || selectedOptions.includes(d.city);
                 const statusMatch = (currentStatusFilter === 'all' || d.status === currentStatusFilter);
                 return cityMatch && statusMatch;
             });
 
-            // आकडे अपडेट करा
+            // Update Stats
             const total = filtered.length;
             const sent = filtered.filter(x => x.status === 'sent').length;
             document.getElementById('totalCountDisplay').innerText = total;
@@ -189,23 +180,23 @@
             document.getElementById('sentCountVal').innerText = sent;
 
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td class="text-center p-8 text-gray-500 font-bold">शहरे निवडा किंवा डेटा उपलब्ध नाही.</td></tr>';
+                tbody.innerHTML = '<tr><td class="text-center p-8 text-gray-500">माहिती उपलब्ध नाही.</td></tr>';
                 return;
             }
 
             filtered.forEach((item) => {
                 const idx = excelData.indexOf(item);
                 const tr = document.createElement('tr');
-                tr.className = "bg-white/80 border-b border-gray-100 block md:table-row mb-2 shadow-sm rounded-xl p-2";
+                tr.className = "bg-white/80 border-b border-gray-100 hover:bg-purple-50 transition block md:table-row mb-2 shadow-sm rounded-xl";
                 
                 const btn = item.status === 'sent' 
-                    ? `<span class="text-green-600 font-bold text-xs uppercase px-4">पाठवले ✓</span>`
+                    ? `<span class="text-green-600 font-bold text-xs p-4">पाठवले ✓</span>`
                     : `<button onclick="sendWhatsApp(${idx})" class="px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg text-xs font-bold shadow-md">पाठवा</button>`;
 
                 tr.innerHTML = `
-                    <td class="p-3 font-bold text-gray-700">${item.name}<br><span class="text-[10px] text-blue-500 uppercase">${item.city}</span></td>
-                    <td class="p-3 text-sm text-gray-500 font-mono">${item.number}</td>
-                    <td class="p-3 text-right flex justify-end gap-2 items-center">
+                    <td class="p-4 font-bold text-gray-700">${item.name}<br><span class="text-[10px] text-blue-500 uppercase">${item.city}</span></td>
+                    <td class="p-4 text-sm text-gray-500 font-mono">${item.number}</td>
+                    <td class="p-4 text-right flex justify-end gap-2 items-center">
                         <a href="tel:${item.number}" class="p-2 bg-blue-100 text-blue-600 rounded-lg"><i data-lucide="phone" class="w-4 h-4"></i></a>
                         ${btn}
                     </td>
@@ -229,7 +220,7 @@
         }
 
         function clearList() {
-            if(confirm("सर्व डेटा पुसायचा का?")) {
+            if(confirm("डेटा पुसायचा का?")) {
                 localStorage.clear();
                 location.reload();
             }
